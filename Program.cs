@@ -66,13 +66,18 @@ class Program
                 return;
             }
 
+            var tattoos = collector.Tattoos.DistinctBy(t => t.Texture.ToLower()).ToList();
+            
             if (listOptionValue)
             {
-                Console.WriteLine("Found tattoos:");
                 foreach (var tattoo in collector.Tattoos)
                     Console.WriteLine($"[{tattoo.Area}][{tattoo.Section}][{tattoo.Name}] \"{tattoo.Texture}\"");
+                Console.WriteLine($"Total tattoos: {collector.Tattoos.Count}");
+                Console.WriteLine($"Distinct tattoos: {tattoos.Count}");
                 return;
             }
+            
+            Console.WriteLine($"Distinct tattoos: {tattoos.Count}");
 
             if (!Directory.Exists(outPathOptionValue))
             {
@@ -95,10 +100,10 @@ class Program
                 version);
 
             var scriptContent = ScriptGenerator.Generate(c.ScriptName, contextOptionValue, collector._tatsRelativePath,
-                collector.Tattoos);
+                tattoos);
 
-            Console.WriteLine($"Writing plugin to \"{pluginPath}\", format: {version}");
-            c.Save(collector.Tattoos.Select(t => t.Section).Distinct());
+            Console.WriteLine($"Writing plugin to \"{pluginPath}\", version: {version}");
+            c.Save(tattoos.Select(t => t.Section).Distinct());
 
             var sourceDirectory = Path.Combine(outPathOptionValue, @"scripts\source");
             if (!Directory.Exists(sourceDirectory))
@@ -108,7 +113,7 @@ class Program
             Console.WriteLine($"Writing script to \"{scriptPath}\"");
             File.WriteAllText(scriptPath, scriptContent);
             
-            Console.WriteLine($"Overlays will have namings: \"{contextOptionValue} - <Tatoo section> - <Tatoo name>\"");
+            Console.WriteLine($"Overlays will have namings: \"{contextOptionValue} - <Tattoo section> - <Tattoo name>\"");
         }, contextOption, dataPathOption, jsonPathOption, listOption, outPathOption, formatOption, versionOption);
 
         try

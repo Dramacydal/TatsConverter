@@ -39,7 +39,7 @@ Event OnFacePaintRequest()
 EndEvent
 """;
 
-    public static string Generate(string scriptName, string contextName, string textureRelativePath, List<TattooData> tattooData)
+    public static string Generate(string scriptName, string contextName, string textureRelativePath, IEnumerable<TattooData> tattooData)
     {
         var content = _template;
 
